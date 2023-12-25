@@ -1,0 +1,1 @@
+{"c":["pages/posts/[id]","webpack"],"r":["pages/create-post"],"m":["./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=C%3A%5Ctest_daangn%5Csrc%5Cpages%5Ccreate-post.tsx&page=%2Fcreate-post!","./src/components/CreatePostForm.tsx","./src/pages/create-post.tsx"]}

@@ -1,0 +1,30 @@
+{
+  "name": "test_daangn",
+  "version": "1.0.0",
+  "description": "Test CRUD board for the development of the dataherd-raika project.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "tsc --build --clean"
+  },
+  "author": "cobluestars",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/next": "^9.0.0",
+    "@types/node": "^20.10.5",
+    "@types/react": "^18.2.45",
+    "@types/uuid": "^9.0.7",
+    "next": "^12.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1525.0",
+    "uuid": "^9.0.1"
+  }
+}
