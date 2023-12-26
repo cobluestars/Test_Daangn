@@ -2,9 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/create-post": "pages/create-post.js",
-  "/api/posts/[id]": "pages/api/posts/[id].js",
   "/posts/[id]": "pages/posts/[id].js",
-  "/api/posts": "pages/api/posts.js"
+  "/api/posts": "pages/api/posts.js",
+  "/": "pages/index.js"
 }

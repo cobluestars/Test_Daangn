@@ -164,7 +164,10 @@ export const searchPosts = async (keyword: string) => {
 
     try {
         const result = await dynamoDb.scan(params).promise();
-        return result.Items;
+        return {
+            items: result.Items
+            // LastEvaluatedKey를 제거, 간단한 조회 기능만 구현
+        };
     } catch (error) {
         console.error(error);
         throw new Error('게시글 검색 중 에러 발생: Error searching posts')       

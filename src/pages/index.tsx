@@ -13,21 +13,33 @@ type Post = {
 const IndexPage = () => {
     const [posts, setPosts] = useState<Post[]>([]); //타입을 Post[]로 설정
     const [category, setCategory] = useState('');
-    // const [page, setPage] = useState(1);
+    const [keyword, setKeyword] = useState('');
 
     useEffect(() => {
         const fetchPosts = async () => {
-            console.log(`Fetching posts with category: ${category}`); // 요청 전 로그
             const response = await fetch(`/api/posts?category=${category}`);
-            console.log('Response:', response); // 서버 응답 로그
             const data = await response.json();
-            console.log('Received data:', data); // 받은 데이터 로그
             setPosts(data.items || []);
         };
     
         fetchPosts();
     }, [category]);
     
+    const handleSearch = async () => {
+        console.log("Searching for:", keyword);
+        try {
+            const response = await fetch(`/api/posts?keyword=${keyword}`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                setPosts(data.items || []);
+            } else {
+                console.error('Failed to fetch posts:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+        }
+    };
 
     return (
         <div>
@@ -45,6 +57,14 @@ const IndexPage = () => {
                 <option value="청소">청소</option>
                 <option value="심부름">심부름</option>
             </select>
+
+            <input 
+                type="text" 
+                value={keyword} 
+                onChange={(e) => setKeyword(e.target.value)} 
+                placeholder="검색어 입력" 
+            />
+            <button onClick={handleSearch}>검색</button>
 
             <ul>
                 {posts.map((post) => (
