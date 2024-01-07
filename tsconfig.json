@@ -12,11 +12,11 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "commonjs",
+    "module": "ESNext",
     "outDir": "dist",
     "rootDir": "src",
     "jsx": "preserve",
-    "noEmit": true,
+    "noEmit": false,
     "incremental": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
@@ -27,6 +27,7 @@
     "src/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.ts"
   ]
 }

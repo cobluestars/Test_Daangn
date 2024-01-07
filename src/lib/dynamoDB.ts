@@ -1,3 +1,5 @@
+// /src/lib/dynamoDB.ts
+
 import AWS from 'aws-sdk';
 
 AWS.config.update({
