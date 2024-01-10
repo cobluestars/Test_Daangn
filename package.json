@@ -24,6 +24,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@google-cloud/bigquery": "^7.3.0",
     "@google-cloud/pubsub": "^4.1.0",
     "aws-sdk": "^2.1525.0",
     "dataherd-raika": "file:../dataherd-raika",

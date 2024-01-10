@@ -23,6 +23,13 @@ type Post = {
     title: string;
     views: number;
     createdAt: string;
+    recommended: boolean;
+}
+
+const extractHour = (timestamp: string): string => {
+  // ISO 문자열 형식 "YYYY-MM-DDTHH:MM:SS.ZZZZ"
+  const hourMatch = timestamp.match(/T(\d{2}):/); // 'T'와 ':' 사이의 시간 부분과 일치
+  return hourMatch ? hourMatch[1] : '';
 }
 
 const IndexPage = () => {
@@ -31,15 +38,14 @@ const IndexPage = () => {
     const [keyword, setKeyword] = useState('');
 
     useEffect(() => {
-        // // 구) 시간 범위 설정
-        // setTimestampRange(new Date('2024-01-02T00:00:00'), new Date('2024-01-02T08:00:00'));
-    
+   
         /**개선된 시간 설정 */
         // TimestampSettings 객체 정의
         type TimestampSettings = {
             startTime: string;
             endTime: string;
             peakTimes?: string[][];
+            peakTimeWeight: number;
         };
 
         // TimestampSettings 객체 초기화
@@ -47,17 +53,20 @@ const IndexPage = () => {
             startTime: '2024-01-02T09:00:00',
             endTime: '2024-01-02T18:00:00',
             peakTimes: [
-                ['2024-01-02T12:00:00', '2024-01-02T13:00:00'],
-                ['2024-01-02T17:00:00', '2024-01-02T18:00:00']
-            ]
+                ['2024-01-02T11:00:00', '2024-01-02T13:00:00'],
+                ['2024-01-02T16:00:00', '2024-01-02T18:00:00']
+            ],
+            peakTimeWeight: 1.6
         };
 
         // 시간 설정 초기화 함수 호출
         initializeTimestampSettings(timestampSettings);
 
-        // getRandomTimestamp 함수를 호출하여 테스트
-        const timestamp = getRandomTimestamp();
-        console.log(timestamp);
+        const dateObject = getRandomTimestamp(); // Date 객체를 반환
+        const dateString = dateObject.toISOString(); // Date 객체를 ISO 문자열로 변환
+        const hour = extractHour(dateString); // 변환된 문자열에서 시간 추출
+        console.log(hour);
+        
         /**개선된 시간 설정 */
 
         /** shotgun mode */
@@ -78,15 +87,15 @@ const IndexPage = () => {
                                         name: 'age',
                                         type: 'number',
                                         distribution: 'normal',
-                                        mean: 20,
-                                        options: [10, 30]
+                                        mean: 22,
+                                        options: [15, 30]
                                     },
                                     {
                                         name: 'salary',
                                         type: 'number',
                                         distribution: 'normal',
-                                        mean: 12000,
-                                        options: [10000, 20000]
+                                        mean: 11000,
+                                        options: [10000, 25000]
                                     }
                                 ]
                             },
@@ -99,7 +108,7 @@ const IndexPage = () => {
                                         type: 'number',
                                         distribution: 'normal',
                                         mean: 40,
-                                        options: [20, 60]
+                                        options: [23, 60]
                                     },
                                     {
                                         name: 'salary',
@@ -119,7 +128,7 @@ const IndexPage = () => {
                                         type: 'number',
                                         distribution: 'normal',
                                         mean: 40,
-                                        options: [20, 60]
+                                        options: [23, 60]
                                     },
                                     {
                                         name: 'salary',
@@ -169,8 +178,8 @@ const IndexPage = () => {
         setGlobalUserDefinedItems(GlobalUserDefinedItems);
 
         // 클릭 및 키워드 이벤트 카운트 설정
-        setUserClickCount(1000);
-        setUserKeywordCount(1000);
+        setUserClickCount(2000);
+        setUserKeywordCount(2000);
 
         //초기 카테고리 데이터 로드
         fetchPosts();
@@ -254,7 +263,28 @@ const IndexPage = () => {
     const fetchPosts = async () => {
         const response = await fetch(`/api/posts?category=${category}`);
         const data = await response.json();
-        setPosts(data.items || []);
+
+        //피크타임 시, 음식점, 카페 게시글 추천 관련 로직
+        const fetchedPosts: Post[] = data.items || [];
+
+        //서버로부터 피크타임 체크
+        const peakTimeResponse = await fetch('/api/check-peak-time');
+        const peakTimeData = await peakTimeResponse.json();
+        
+        console.log(peakTimeData);
+        if(peakTimeData.isPeakTime) {
+            console.log("피크 타임인가요?: ", peakTimeData.isPeakTime);
+
+            // 피크타임일 시, 음식점과 카페 카테고리에 추천 배지가 달림
+            const updatedPosts = fetchedPosts.map(post => ({
+                ...post,
+                recommended: post.category === '음식점' || post.category === '카페',
+            }));
+            setPosts(updatedPosts);
+            console.log(updatedPosts);
+        } else {
+            setPosts(fetchedPosts);
+        }
     };
 
     useEffect(()  => {
@@ -311,9 +341,9 @@ const IndexPage = () => {
 
             <ul className="posts-list">
                 {posts.map((post) => (
-                    <li key={post.id} className="post-item" onClick={handlePostClick}>
+                    <li key={post.id} className={`post-item ${post.recommended ? 'recommended' : ''}`} onClick={handlePostClick}>
                         <Link href={`/posts/${post.id}`}>
-                            <h5>【{post.category}】 {post.title} 작성일: {post.createdAt} 조회수: {post.views}</h5>
+                            <h5>【{post.category}】 {post.title} {post.recommended && <span className="badge">오늘의 추천</span>} 작성일: {post.createdAt} 조회수: {post.views}</h5>
                         </Link>
                     </li>
                 ))}
@@ -381,6 +411,18 @@ const IndexPage = () => {
                 .post-item h5 {
                     margin: 0;
                     color: #333;
+                }
+
+                .badge {
+                    display: inline-block;
+                    margin-left: 10px;
+                    padding: 2px 5px;
+                    border-radius: 7px;
+                    color: #fff;
+                    vertical-align: middle;
+                    font-weight: bold;
+                    font-size: 12px; /* 배지 폰트 크기 */
+                    background-color: #f00; /* 배지 색상 */
                 }
                 `}
             </style>

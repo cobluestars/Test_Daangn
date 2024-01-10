@@ -3,5 +3,6 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
-  "/api/posts": "pages/api/posts.js"
+  "/api/posts": "pages/api/posts.js",
+  "/api/check-peak-time": "pages/api/check-peak-time.js"
 }
